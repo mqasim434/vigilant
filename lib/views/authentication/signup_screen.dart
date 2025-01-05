@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:vigilant/components/custom_textfield.dart';
+import 'package:vigilant/controllers/auth_controller.dart';
 import 'package:vigilant/views/authentication/signin_screen.dart';
-import 'package:vigilant/views/onboarding/onboarding_screen.dart';
-
 class SignUpScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   SignUpScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.put(AuthController());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -16,9 +20,9 @@ class SignUpScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                SizedBox(height: constraints.maxHeight * 0.08),
+                SizedBox(height: constraints.maxHeight * 0.04),
                 Image.asset(width: 100, 'assets/images/vigilant_logo.png'),
-                SizedBox(height: constraints.maxHeight * 0.08),
+                SizedBox(height: constraints.maxHeight * 0.04),
                 Text(
                   "Sign Up",
                   style: Theme.of(context)
@@ -31,88 +35,77 @@ class SignUpScreen extends StatelessWidget {
                   key: _formKey,
                   child: Column(
                     children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'Full name',
-                          filled: true,
-                          fillColor: Color(0xFFF5FCF9),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.0 * 1.5, vertical: 16.0),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(50)),
-                          ),
-                        ),
-                        onSaved: (name) {
-                          // Save it
+                      CustomTextField(
+                        controller: authController.nameController,
+                        hintText: 'Full name',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your full name';
+                          }
+                          return null;
                         },
                       ),
                       const SizedBox(height: 16.0),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'Phone',
-                          filled: true,
-                          fillColor: Color(0xFFF5FCF9),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.0 * 1.5, vertical: 16.0),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(50)),
-                          ),
-                        ),
+                      CustomTextField(
+                        controller: authController.emailController,
+                        hintText: 'Email',
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          } else if (!value.isEmail) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16.0),
+                      CustomTextField(
+                        controller: authController.phoneController,
+                        hintText: 'Phone',
                         keyboardType: TextInputType.phone,
-                        onSaved: (phone) {
-                          // Save it
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          return null;
                         },
                       ),
                       const SizedBox(height: 16.0),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'Password',
-                          filled: true,
-                          fillColor: Color(0xFFF5FCF9),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.0 * 1.5, vertical: 16.0),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(50)),
-                          ),
-                        ),
+                      CustomTextField(
+                        controller: authController.passwordController,
+                        hintText: 'Password',
                         obscureText: true,
-                        onSaved: (passaword) {
-                          // Save it
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          } else if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            hintText: 'Confirm Password',
-                            filled: true,
-                            fillColor: Color(0xFFF5FCF9),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          obscureText: true,
-                          onSaved: (passaword) {
-                            // Save it
-                          },
-                        ),
+                      const SizedBox(height: 16.0),
+                      CustomTextField(
+                        controller: authController.confirmPasswordController,
+                        hintText: 'Confirm Password',
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value != authController.passwordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
+                              authController.signUp();
                             }
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => OnboardingScreen()));
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
@@ -139,14 +132,16 @@ class SignUpScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color!
-                                        .withOpacity(0.64),
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color!
+                                      .withOpacity(0.64),
+                              ),
                         ),
                       ),
                     ],

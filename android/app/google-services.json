@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "249672349919",
+    "project_id": "vigilant-6fc9c",
+    "storage_bucket": "vigilant-6fc9c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249672349919:android:f8078f59ea677a6eef516a",
+        "android_client_info": {
+          "package_name": "com.example.vigilant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqAz2Sm0imeHq-KTdpIxHdPo6-krd4no0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

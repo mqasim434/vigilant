@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:vigilant/controllers/auth_controller.dart';
 import 'package:vigilant/views/authentication/forgot_password_screen.dart';
 import 'package:vigilant/views/authentication/signup_screen.dart';
 
@@ -8,6 +10,7 @@ class SignInScreen extends StatelessWidget {
   SignInScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.put(AuthController());
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -33,8 +36,9 @@ class SignInScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: authController.emailController,
                           decoration: const InputDecoration(
-                            hintText: 'Phone',
+                            hintText: 'Email',
                             filled: true,
                             fillColor: Color(0xFFF5FCF9),
                             contentPadding: const EdgeInsets.symmetric(
@@ -53,6 +57,7 @@ class SignInScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: TextFormField(
+                            controller: authController.passwordController,
                             obscureText: true,
                             decoration: const InputDecoration(
                               hintText: 'Password',
@@ -75,7 +80,7 @@ class SignInScreen extends StatelessWidget {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              // Navigate to the main screen
+                              authController.signIn();
                             }
                           },
                           style: ElevatedButton.styleFrom(
